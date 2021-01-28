@@ -1,6 +1,7 @@
 tmp/
 notebooks/
 __pycache__/
+venv/
 .ipynb_checkpoints/
 scripts/run_*.sh
 test*
