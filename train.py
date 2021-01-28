@@ -27,32 +27,32 @@ def parse_args():
     parser.add_argument('--task_name', default='swingup')
     parser.add_argument('--pre_transform_image_size', default=100, type=int)
 
-    parser.add_argument('--image_size', default=84, type=int)
-    parser.add_argument('--action_repeat', default=1, type=int)
+    parser.add_argument('--image_size', default=108, type=int)
+    parser.add_argument('--action_repeat', default=4, type=int)
     parser.add_argument('--frame_stack', default=3, type=int)
     # replay buffer
     parser.add_argument('--replay_buffer_capacity', default=100000, type=int)
     # train
     parser.add_argument('--agent', default='rad_sac', type=str)
     parser.add_argument('--init_steps', default=1000, type=int)
-    parser.add_argument('--num_train_steps', default=1000000, type=int)
-    parser.add_argument('--batch_size', default=32, type=int)
+    parser.add_argument('--num_train_steps', default=500000, type=int)
+    parser.add_argument('--batch_size', default=512, type=int)
     parser.add_argument('--hidden_dim', default=1024, type=int)
     # eval
     parser.add_argument('--eval_freq', default=1000, type=int)
     parser.add_argument('--num_eval_episodes', default=10, type=int)
-    # critic
+    # critic (Q_ϕ)
     parser.add_argument('--critic_lr', default=1e-3, type=float)
     parser.add_argument('--critic_beta', default=0.9, type=float)
     parser.add_argument('--critic_tau', default=0.01, type=float) # try 0.05 or 0.1
     parser.add_argument('--critic_target_update_freq', default=2, type=int) # try to change it to 1 and retain 0.01 above
-    # actor
+    # actor (π_ψ)
     parser.add_argument('--actor_lr', default=1e-3, type=float)
     parser.add_argument('--actor_beta', default=0.9, type=float)
     parser.add_argument('--actor_log_std_min', default=-10, type=float)
     parser.add_argument('--actor_log_std_max', default=2, type=float)
     parser.add_argument('--actor_update_freq', default=2, type=int)
-    # encoder
+    # encoder (f_θ)
     parser.add_argument('--encoder_type', default='pixel', type=str)
     parser.add_argument('--encoder_feature_dim', default=50, type=int)
     parser.add_argument('--encoder_lr', default=1e-3, type=float)
@@ -73,12 +73,43 @@ def parse_args():
     parser.add_argument('--save_video', default=False, action='store_true')
     parser.add_argument('--save_model', default=False, action='store_true')
     parser.add_argument('--detach_encoder', default=False, action='store_true')
+    parser.add_argument('--test_mode', default=False, action='store_true')
+    parser.add_argument('--replicate', default=False, action='store_true')
     # data augs
-    parser.add_argument('--data_augs', default='crop', type=str)
+    parser.add_argument('--data_augs', default='translate', type=str)
 
 
     parser.add_argument('--log_interval', default=100, type=int)
     args = parser.parse_args()
+
+    if args.replicate:
+        # Action repeat
+        if args.domain_name in ['finger', 'walker']:
+            args.action_repeat = 2
+        elif args.domain_name == 'cartpole':
+            args.action_repeat = 8
+        else:
+            args.action_repeat = 4
+
+        # Learning rate
+        if args.domain == 'cheetah':
+            args.critic_lr = 2e-4
+            args.actor_lr = 2e-4
+            args.encoder_lr = 2e-4
+
+        # Data augmentation
+        if args.domain == 'walker':
+            args.pre_transform_image_size = 100
+            args.image_size = 84
+            args.data_aug = 'crop'
+
+    if args.test_mode:
+        print("Test mode enabled; modifying args for speed.")
+        args.init_steps = 100
+        args.num_train_steps = 2000
+        args.eval_freq = 1000
+        args.num_eval_episodes = 2
+
     return args
 
 

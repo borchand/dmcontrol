@@ -339,7 +339,8 @@ class RadSacAgent(object):
         if self.encoder_type == 'pixel':
             # create CURL encoder (the 128 batch size is probably unnecessary)
             self.CURL = CURL(obs_shape, encoder_feature_dim,
-                        self.latent_dim, self.critic,self.critic_target, output_type='continuous').to(self.device)
+                        #NOTE: self.latent_dim is being used as a batch size??
+                        self.latent_dim, self.critic, self.critic_target, output_type='continuous').to(self.device)
 
             # optimizer for critic encoder for reconstruction loss
             self.encoder_optimizer = torch.optim.Adam(
