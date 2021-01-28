@@ -10,6 +10,7 @@ import time
 import json
 import dmc2gym
 import copy
+from tqdm import tqdm
 
 import utils
 from logger import Logger
@@ -221,10 +222,12 @@ def main():
 
     video = VideoRecorder(video_dir if args.save_video else None)
 
+    os.makedirs(args.work_dir, exist_ok=True)
     with open(os.path.join(args.work_dir, 'args.json'), 'w') as f:
         json.dump(vars(args), f, sort_keys=True, indent=4)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print('Running on {}'.format(device))
 
     action_shape = env.action_space.shape
 
@@ -258,7 +261,7 @@ def main():
     episode, episode_reward, done = 0, 0, True
     start_time = time.time()
 
-    for step in range(args.num_train_steps):
+    for step in tqdm(range(args.num_train_steps)):
         # evaluate agent periodically
 
         if step % args.eval_freq == 0:
