@@ -83,6 +83,7 @@ def parse_args():
     parser.add_argument('--markov_contr_coef', default=1, type=float)
     parser.add_argument('--markov_lr', default=1e-3, type=float)
     parser.add_argument('--markov_beta', default=0.9, type=float)
+    parser.add_argument('--tag', type=str)
 
     parser.add_argument('--log_interval', default=100, type=int)
     args = parser.parse_args()
