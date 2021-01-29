@@ -324,7 +324,7 @@ class RadSacAgent(object):
 
         # Markov Abstractions
         self.encoder = self.critic.encoder
-        self.markov_head = MarkovHead(markov_params, action_shape)
+        self.markov_head = MarkovHead(markov_params, action_shape, LOG_FREQ)
 
         self.log_alpha = torch.tensor(np.log(init_temperature)).to(device)
         self.log_alpha.requires_grad = True
