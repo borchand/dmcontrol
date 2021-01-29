@@ -113,10 +113,10 @@ class MarkovHead(torch.nn.Module):
         z1_pos_neg = torch.cat([z1, z1_neg], dim=0)
         is_real_transition = torch.cat([torch.ones(N), torch.zeros(N)], dim=0).to(z0.device)
         log_pr_real = self.discriminator(z0_extended, z1_pos_neg)
-        l_ratio = self.bce(input=log_pr_real, target=is_real_transition.unsqueeze(-1).float())
+        l_contr = self.bce(input=log_pr_real, target=is_real_transition.unsqueeze(-1).float())
 
-        markov_loss = self.inverse_coef * l_inverse + self.contrastive_coef * l_ratio
-        return markov_loss
+        markov_loss = self.inverse_coef * l_inverse + self.contrastive_coef * l_contr
+        return markov_loss, l_inverse, l_contr
 
     def log(self, L, step):
         if step % self.log_freq != 0:

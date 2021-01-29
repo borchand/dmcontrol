@@ -430,9 +430,12 @@ class RadSacAgent(object):
         latent = self.encoder(obs, detach=False)
         next_latent = self.encoder(next_obs, detach=False)
 
-        markov_loss = self.markov_head.compute_markov_loss(latent, action, next_latent)
+        markov_losses = self.markov_head.compute_markov_loss(latent, action, next_latent)
+        markov_loss, markov_inv_loss, markov_contr_loss = markov_losses
         if step % self.log_interval == 0:
             L.log('train_markov/loss', markov_loss, step)
+            L.log('train_markov/inv_loss', markov_inv_loss, step)
+            L.log('train_markov/contr_loss', markov_contr_loss, step)
 
         self.markov_optimizer.zero_grad()
         markov_loss.backward()
