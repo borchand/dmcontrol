@@ -105,9 +105,9 @@ def parse_args():
 
     if args.test_mode:
         print("Test mode enabled; modifying args for speed.")
-        args.init_steps = 100
-        args.num_train_steps = 2000
-        args.eval_freq = 1000
+        args.init_steps = 4
+        args.num_train_steps = 16
+        args.eval_freq = 8
         args.num_eval_episodes = 2
 
     return args
