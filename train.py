@@ -302,9 +302,9 @@ def main():
             L.log('eval/episode', episode, step)
             eval_data = evaluate(env, agent, video, args.num_eval_episodes, L, step,args)
             if args.save_model:
-                is_best = (eval_data['mean_episode_reward'] > best_avg_reward)
+                is_best = (eval_data['mean_ep_reward'] > best_avg_reward)
                 if is_best:
-                    best_avg_reward = eval_data['mean_episode_reward']
+                    best_avg_reward = eval_data['mean_ep_reward']
                 agent.save(model_dir, step, is_best=is_best)
             if args.save_buffer:
                 replay_buffer.save(buffer_dir)
