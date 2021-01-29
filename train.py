@@ -36,7 +36,7 @@ def parse_args():
     parser.add_argument('--agent', default='rad_sac', type=str)
     parser.add_argument('--init_steps', default=1000, type=int)
     parser.add_argument('--num_train_steps', default=500000, type=int)
-    parser.add_argument('--batch_size', default=512, type=int)
+    parser.add_argument('--batch_size', default=128, type=int)
     parser.add_argument('--hidden_dim', default=1024, type=int)
     # eval
     parser.add_argument('--eval_freq', default=1000, type=int)
