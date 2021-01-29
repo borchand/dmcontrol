@@ -8,7 +8,8 @@ import shutil
 
 import utils
 from encoder import make_encoder
-import data_augs as rad 
+from markov import MarkovHead
+import data_augs as rad
 
 LOG_FREQ = 10000
 
@@ -264,6 +265,7 @@ class RadSacAgent(object):
         detach_encoder=False,
         latent_dim=128,
         data_augs = '',
+        markov_params = None,
     ):
         self.device = device
         self.discount = discount
@@ -278,6 +280,7 @@ class RadSacAgent(object):
         self.detach_encoder = detach_encoder
         self.encoder_type = encoder_type
         self.data_augs = data_augs
+        self.markov = markov_params['enable']
 
         self.augs_funcs = {}
 
@@ -319,6 +322,10 @@ class RadSacAgent(object):
         # tie encoders between actor and critic, and CURL and critic
         self.actor.encoder.copy_conv_weights_from(self.critic.encoder)
 
+        # Markov Abstractions
+        self.encoder = self.critic.encoder
+        self.markov_head = MarkovHead(markov_params, action_shape)
+
         self.log_alpha = torch.tensor(np.log(init_temperature)).to(device)
         self.log_alpha.requires_grad = True
         # set target entropy to -|A|
@@ -335,6 +342,12 @@ class RadSacAgent(object):
 
         self.log_alpha_optimizer = torch.optim.Adam(
             [self.log_alpha], lr=alpha_lr, betas=(alpha_beta, 0.999)
+        )
+
+        self.markov_optimizer = torch.optim.Adam(
+            self.markov_head.parameters(),
+            lr=markov_params['lr'],
+            betas=(markov_params['optim_beta'], 0.999)
         )
 
         if self.encoder_type == 'pixel':
@@ -360,6 +373,7 @@ class RadSacAgent(object):
         self.training = training
         self.actor.train(training)
         self.critic.train(training)
+        self.markov_head.train(training)
         if self.encoder_type == 'pixel':
             self.CURL.train(training)
 
@@ -409,6 +423,20 @@ class RadSacAgent(object):
         self.critic_optimizer.step()
 
         self.critic.log(L, step)
+
+    def update_markov_head(self, obs, action, next_obs, L):
+        latent = self.encoder(obs, detach=False)
+        next_latent = self.encoder(next_obs, detach=False)
+
+        markov_loss = self.markov_head.compute_markov_loss(latent, action, next_latent)
+        if step % self.log_interval == 0:
+            L.log('train_markov/loss', markov_loss, step)
+
+        self.markov_optimizer.zero_grad()
+        markov_loss.backward()
+        self.markov_optimizer.step()
+
+        self.markov_head.log(L, step)
 
     def update_actor_and_alpha(self, obs, L, step):
         # detach encoder, so we don't update it with the actor loss
@@ -478,6 +506,8 @@ class RadSacAgent(object):
             L.log('train/batch_reward', reward.mean(), step)
 
         self.update_critic(obs, action, reward, next_obs, not_done, L, step)
+        if self.markov:
+            self.update_markov_head(obs, action, next_obs)
 
         if step % self.actor_update_freq == 0:
             self.update_actor_and_alpha(obs, L, step)
@@ -505,9 +535,12 @@ class RadSacAgent(object):
         torch.save(
             self.critic.state_dict(), '%s/critic_latest.pt' % (model_dir)
         )
+        torch.save(
+            self.markov_head.state_dict(), '%s/markov_head_latest.pt' % (model_dir)
+        )
 
         if is_best:
-            for model_name in ['actor', 'critic']:
+            for model_name in ['actor', 'critic', 'markov_head']:
                 model_file = '%s/%s_latest.pt' % (model_dir, model_name)
                 best_file = '%s/%s_best.pt' % (model_dir, model_name)
                 shutil.copyfile(model_file, best_file)
