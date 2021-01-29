@@ -426,7 +426,7 @@ class RadSacAgent(object):
 
         self.critic.log(L, step)
 
-    def update_markov_head(self, obs, action, next_obs, L):
+    def update_markov_head(self, obs, action, next_obs, L, step):
         latent = self.encoder(obs, detach=False)
         next_latent = self.encoder(next_obs, detach=False)
 
@@ -509,7 +509,7 @@ class RadSacAgent(object):
 
         self.update_critic(obs, action, reward, next_obs, not_done, L, step)
         if self.markov:
-            self.update_markov_head(obs, action, next_obs, L)
+            self.update_markov_head(obs, action, next_obs, L, step)
 
         if step % self.actor_update_freq == 0:
             self.update_actor_and_alpha(obs, L, step)
