@@ -172,9 +172,11 @@ def evaluate(env, agent, video, num_episodes, L, step, args):
         log_data[key][step]['env_step'] = step * args.action_repeat
 
         np.save(filename,log_data)
+        return log_data[key][step]
 
-    run_eval_loop(sample_stochastically=False)
+    eval_data = run_eval_loop(sample_stochastically=False)
     L.dump(step)
+    return eval_data
 
 
 def make_agent(obs_shape, action_shape, args, device):
@@ -290,6 +292,7 @@ def main():
     L = Logger(args.work_dir, use_tb=args.save_tb)
 
     episode, episode_reward, done = 0, 0, True
+    best_avg_reward = -np.inf
     start_time = time.time()
 
     for step in tqdm(range(args.num_train_steps)):
@@ -297,9 +300,12 @@ def main():
 
         if step % args.eval_freq == 0:
             L.log('eval/episode', episode, step)
-            evaluate(env, agent, video, args.num_eval_episodes, L, step,args)
+            eval_data = evaluate(env, agent, video, args.num_eval_episodes, L, step,args)
             if args.save_model:
-                agent.save(model_dir, step)
+                is_best = (eval_data['mean_episode_reward'] > best_avg_reward)
+                if is_best:
+                    best_avg_reward = eval_data['mean_episode_reward']
+                agent.save(model_dir, step, is_best=is_best)
             if args.save_buffer:
                 replay_buffer.save(buffer_dir)
 

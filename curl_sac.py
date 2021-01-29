@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import copy
 import math
+import shutil
 
 import utils
 from encoder import make_encoder
@@ -497,13 +498,19 @@ class RadSacAgent(object):
         #    obs_anchor, obs_pos = cpc_kwargs["obs_anchor"], cpc_kwargs["obs_pos"]
         #    self.update_cpc(obs_anchor, obs_pos,cpc_kwargs, L, step)
 
-    def save(self, model_dir, step):
+    def save(self, model_dir, step, is_best=False):
         torch.save(
-            self.actor.state_dict(), '%s/actor_%s.pt' % (model_dir, step)
+            self.actor.state_dict(), '%s/actor_latest.pt' % (model_dir)
         )
         torch.save(
-            self.critic.state_dict(), '%s/critic_%s.pt' % (model_dir, step)
+            self.critic.state_dict(), '%s/critic_latest.pt' % (model_dir)
         )
+
+        if is_best:
+            for model_name in ['actor', 'critic']:
+                model_file = '%s/%s_latest.pt' % (model_dir, model_name)
+                best_file = '%s/%s_best.pt' % (model_dir, model_name)
+                shutil.copyfile(model_file, best_file)
 
     def save_curl(self, model_dir, step):
         torch.save(
