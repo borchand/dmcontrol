@@ -92,13 +92,13 @@ def parse_args():
             args.action_repeat = 4
 
         # Learning rate
-        if args.domain == 'cheetah':
+        if args.domain_name == 'cheetah':
             args.critic_lr = 2e-4
             args.actor_lr = 2e-4
             args.encoder_lr = 2e-4
 
         # Data augmentation
-        if args.domain == 'walker':
+        if args.domain_name == 'walker':
             args.pre_transform_image_size = 100
             args.image_size = 84
             args.data_aug = 'crop'
