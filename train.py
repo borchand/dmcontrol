@@ -77,10 +77,28 @@ def parse_args():
     parser.add_argument('--replicate', default=False, action='store_true')
     # data augs
     parser.add_argument('--data_augs', default='translate', type=str)
-
+    # Markov abstraction
+    parser.add_argument('--markov', default=False, action='store_true')
+    parser.add_argument('--markov_inv_coef', default=1, type=float)
+    parser.add_argument('--markov_contr_coef', default=1, type=float)
+    parser.add_argument('--markov_lr', default=1e-3, type=float)
+    parser.add_argument('--markov_beta', default=0.9, type=float)
 
     parser.add_argument('--log_interval', default=100, type=int)
     args = parser.parse_args()
+
+    markov_params = {
+        'enable': args.markov,
+        'lr': args.markov_lr,
+        'inverse_coef': args.markov_inv_coef,
+        'contrastive_coef': args.markov_contr_coef,
+        'optim_beta': args.markov_beta,
+        'latent_dim': args.encoder_feature_dim,
+        'layer_size': args.hidden_dim,
+        'log_std_min': args.actor_log_std_min,
+        'log_std_max': args.actor_log_std_max,
+    }
+    args.markov_params = markov_params
 
     if args.replicate:
         # Action repeat
@@ -208,8 +226,8 @@ def make_agent(obs_shape, action_shape, args, device):
             log_interval=args.log_interval,
             detach_encoder=args.detach_encoder,
             latent_dim=args.latent_dim,
-            data_augs=args.data_augs
-
+            data_augs=args.data_augs,
+            markov_params=args.markov_params
         )
     else:
         assert 'agent is not supported: %s' % args.agent
