@@ -122,11 +122,4 @@ class MarkovHead(torch.nn.Module):
         if step % self.log_freq != 0:
             return
 
-        self.encoder.log(L, step, self.log_freq)
-
-        for k, v in self.outputs.items():
-            L.log_histogram('train_markov/%s_hist' % k, v, step)
-
-        for i in range(3):
-            L.log_param('train_markov/q1_fc%d' % i, self.Q1.trunk[i * 2], step)
-            L.log_param('train_markov/q2_fc%d' % i, self.Q2.trunk[i * 2], step)
+        pass
