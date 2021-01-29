@@ -507,7 +507,7 @@ class RadSacAgent(object):
 
         self.update_critic(obs, action, reward, next_obs, not_done, L, step)
         if self.markov:
-            self.update_markov_head(obs, action, next_obs)
+            self.update_markov_head(obs, action, next_obs, L)
 
         if step % self.actor_update_freq == 0:
             self.update_actor_and_alpha(obs, L, step)
