@@ -267,7 +267,7 @@ def main():
     + str(args.batch_size) + '-s' + str(args.seed)  + '-' + args.encoder_type + '-' + args.tag
     args.work_dir = args.work_dir + '/'  + exp_name
 
-    utils.make_dir(args.work_dir)
+    os.makedirs(args.work_dir, exist_ok=True)
     video_dir = utils.make_dir(os.path.join(args.work_dir, 'video'))
     model_dir = utils.make_dir(os.path.join(args.work_dir, 'model'))
     buffer_dir = utils.make_dir(os.path.join(args.work_dir, 'buffer'))
