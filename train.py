@@ -120,7 +120,7 @@ def parse_args():
         if args.domain_name == 'walker':
             args.pre_transform_image_size = 100
             args.image_size = 84
-            args.data_aug = 'crop'
+            args.data_augs = 'crop'
 
     if args.test_mode:
         print("Test mode enabled; modifying args for speed.")
