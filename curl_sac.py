@@ -379,6 +379,14 @@ class RadSacAgent(object):
         if self.encoder_type == 'pixel':
             self.CURL.train(training)
 
+    def load_encoder(self, model_file):
+        map_loc = 'cpu' if not torch.cuda.is_available() else None
+        state_dict = torch.load(model_file, map_location=map_loc)
+        state_dict = {k.replace('encoder.',''): v for (k, v) in state_dict.items() if 'encoder' in k}
+        self.encoder.load_state_dict(state_dict)
+        for param in self.encoder.parameters():
+            param.requires_grad = False
+
     @property
     def alpha(self):
         return self.log_alpha.exp()

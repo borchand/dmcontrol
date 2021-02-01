@@ -72,6 +72,8 @@ def parse_args():
     parser.add_argument('--save_buffer', default=False, action='store_true')
     parser.add_argument('--save_video', default=False, action='store_true')
     parser.add_argument('--save_model', default=False, action='store_true')
+    parser.add_argument('--load_model', default='', type=str,
+        help='File path to trained critic model from which to load encoder')
     parser.add_argument('--detach_encoder', default=False, action='store_true')
     parser.add_argument('--test_mode', default=False, action='store_true')
     parser.add_argument('--replicate', default=False, action='store_true')
@@ -307,6 +309,8 @@ def main():
         device=device
     )
 
+    if args.load_model:
+        agent.load_encoder(args.load_model)
 
     L = Logger(args.work_dir, use_tb=args.save_tb)
 
