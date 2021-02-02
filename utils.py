@@ -286,7 +286,7 @@ def center_crop_image(image, output_size):
     return image
 
 
-def center_crop_images(image, output_size):
+def center_crop_images(image, output_size=84):
     h, w = image.shape[2:]
     new_h, new_w = output_size, output_size
 
@@ -304,4 +304,22 @@ def center_translate(image, size):
     h1 = (size - h) // 2
     w1 = (size - w) // 2
     outs[:, h1:h1 + h, w1:w1 + w] = image
+    return outs
+
+def center_translate_images(image, size, return_random_idxs=False, h1s=None, w1s=None):
+    """
+    Same as above, but with added batch dimension, and dummy args to make
+    things happy. The return_random_indices is supposed to allow passing
+    in the same random indices a second time, but there's no randomness
+    anyway, so we ignore all three optional arguments and just make sure
+    the API doesn't change.
+    """
+    b, c, h, w = image.shape
+    assert size >= h and size >= w
+    outs = np.zeros((b, c, size, size), dtype=image.dtype)
+    h1 = (size - h) // 2
+    w1 = (size - w) // 2
+    outs[:, :, h1:h1 + h, w1:w1 + w] = image
+    if return_random_idxs:
+        return outs, {}
     return outs

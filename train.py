@@ -80,6 +80,7 @@ def parse_args():
     # data augs
     parser.add_argument('--data_augs', default='translate', type=str)
     # Markov abstraction
+    parser.add_argument('--disable_rad', default=False, action='store_true')
     parser.add_argument('--markov', default=False, action='store_true')
     parser.add_argument('--markov_inv_coef', default=1, type=float)
     parser.add_argument('--markov_contr_coef', default=1, type=float)
@@ -123,6 +124,10 @@ def parse_args():
             args.pre_transform_image_size = 100
             args.image_size = 84
             args.data_augs = 'crop'
+
+    if args.disable_rad:
+        assert args.data_augs in ['crop', 'translate']
+        args.data_augs = 'center_' + args.data_augs
 
     if args.test_mode:
         print("Test mode enabled; modifying args for speed.")
