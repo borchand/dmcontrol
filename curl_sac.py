@@ -286,6 +286,7 @@ class RadSacAgent(object):
 
         aug_to_func = {
                 'crop':rad.random_crop,
+                'center_crop':utils.center_crop_images,
                 'grayscale':rad.random_grayscale,
                 'cutout':rad.random_cutout,
                 'cutout_color':rad.random_cutout_color,
@@ -294,6 +295,7 @@ class RadSacAgent(object):
                 'rand_conv':rad.random_convolution,
                 'color_jitter':rad.random_color_jitter,
                 'translate':rad.random_translate,
+                'center_translate':utils.center_translate_images,
                 'no_aug':rad.no_aug,
             }
 
