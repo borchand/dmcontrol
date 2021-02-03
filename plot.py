@@ -185,6 +185,31 @@ markov_hyperparams = {
         'backup_file': 'tmp/rad-markov/cheetah-run-01-31-im108-b128-s2-pixel-tuning-rad-markov-big-inv_5/eval.log'},
   86: {'alg': 'rad+markov-inv_coef=30', 'inverse_coef': 30, 'markov_lr': 1e-4, 'seed': 3, 'domain': 'cheetah-run', 'action_repeat': 4,
         'backup_file': 'tmp/rad-markov/cheetah-run-01-31-im108-b128-s3-pixel-tuning-rad-markov-big-inv_6/eval.log'},
+  91: {'alg': 'rad+markov-inv_coef=10', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 1, 'domain': 'walker-walk', 'action_repeat': 2,
+        'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s1-pixel-tuning-rad-markov-big-inv2_7/eval.log'},
+  92: {'alg': 'rad+markov-inv_coef=10', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 2, 'domain': 'walker-walk', 'action_repeat': 2,
+        'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s2-pixel-tuning-rad-markov-big-inv2_8/eval.log'},
+  93: {'alg': 'rad+markov-inv_coef=10', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 3, 'domain': 'walker-walk', 'action_repeat': 2,
+        'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s3-pixel-tuning-rad-markov-big-inv2_9/eval.log'},
+  94: {'alg': 'rad+markov-inv_coef=30', 'inverse_coef': 30, 'markov_lr': 1e-3, 'seed': 1, 'domain': 'walker-walk', 'action_repeat': 2,
+        'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s1-pixel-tuning-rad-markov-big-inv2_10/eval.log'},
+  95: {'alg': 'rad+markov-inv_coef=30', 'inverse_coef': 30, 'markov_lr': 1e-3, 'seed': 2, 'domain': 'walker-walk', 'action_repeat': 2,
+        'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s2-pixel-tuning-rad-markov-big-inv2_11/eval.log'},
+  96: {'alg': 'rad+markov-inv_coef=30', 'inverse_coef': 30, 'markov_lr': 1e-3, 'seed': 3, 'domain': 'walker-walk', 'action_repeat': 2,
+        'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s3-pixel-tuning-rad-markov-big-inv2_12/eval.log'},
+  101: {'alg': 'rad+markov-inv_coef=10', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 1, 'domain': 'cheetah-run', 'action_repeat': 4,
+        'backup_file': 'tmp/rad-markov/cheetah-run-02-02-im108-b128-s1-pixel-tuning-rad-markov-big-inv2_1/eval.log'},
+  102: {'alg': 'rad+markov-inv_coef=10', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 2, 'domain': 'cheetah-run', 'action_repeat': 4,
+        'backup_file': 'tmp/rad-markov/cheetah-run-02-02-im108-b128-s2-pixel-tuning-rad-markov-big-inv2_2/eval.log'},
+  103: {'alg': 'rad+markov-inv_coef=10', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 3, 'domain': 'cheetah-run', 'action_repeat': 4,
+        'backup_file': 'tmp/rad-markov/cheetah-run-02-02-im108-b128-s3-pixel-tuning-rad-markov-big-inv2_3/eval.log'},
+  104: {'alg': 'rad+markov-inv_coef=30', 'inverse_coef': 30, 'markov_lr': 1e-3, 'seed': 1, 'domain': 'cheetah-run', 'action_repeat': 4,
+        'backup_file': 'tmp/rad-markov/cheetah-run-02-02-im108-b128-s1-pixel-tuning-rad-markov-big-inv2_4/eval.log'},
+  105: {'alg': 'rad+markov-inv_coef=30', 'inverse_coef': 30, 'markov_lr': 1e-3, 'seed': 2, 'domain': 'cheetah-run', 'action_repeat': 4,
+        'backup_file': 'tmp/rad-markov/cheetah-run-02-02-im108-b128-s2-pixel-tuning-rad-markov-big-inv2_5/eval.log'},
+  106: {'alg': 'rad+markov-inv_coef=30', 'inverse_coef': 30, 'markov_lr': 1e-3, 'seed': 3, 'domain': 'cheetah-run', 'action_repeat': 4,
+        'backup_file': 'tmp/rad-markov/cheetah-run-02-02-im108-b128-s3-pixel-tuning-rad-markov-big-inv2_6/eval.log'},
+
 }
 
 curl_hyperparams = {
@@ -239,7 +264,7 @@ for i in range(1,18):
 
 #%%
 
-for i in list(range(1,55))+list(range(61,70))+list(range(81,87))+list(range(71,77)):
+for i in list(range(1,55))+list(range(61,70))+list(range(81,87))+list(range(71,77))+list(range(101,107))+list(range(91,97)):
     filepath = 'logs/tuning-rad-markov_%d.g' % i
     params = markov_hyperparams[i]
     if params.get('backup_file', False):
@@ -283,22 +308,32 @@ subset = subset.query("alg != 'curl'")
 # subset = subset.query("domain == 'cartpole-swingup'")
 # subset = subset.query("domain == 'cheetah-run'")
 # subset = subset.query("domain == 'finger-spin'")
+# subset = subset.query("domain == 'reacher-easy'")
 # subset = subset.query("domain == 'walker-walk'")
+# subset = subset.query("domain in ['walker-walk', 'cheetah-run']")
 subset = subset.query("domain != 'ball_in_cup-catch' or ((markov_lr == 0.001 or alg in ['state-sac', 'rad', 'curl']) and steps <= 100e3)")
 subset = subset.query("domain != 'cartpole-swingup' or ((markov_lr == 0.0001 or alg in ['state-sac', 'rad', 'curl']) and steps <= 100e3)")
 subset = subset.query("domain != 'finger-spin' or markov_lr == 0.001 or alg in ['state-sac', 'rad', 'curl']")
 subset = subset.query("domain != 'reacher-easy' or markov_lr == 0.001 or alg in ['state-sac', 'rad', 'curl']")
 subset = subset.query("domain != 'cheetah-run' or (markov_lr == 0.0001 and inverse_coef == 10.0) or alg in ['state-sac', 'rad', 'curl']")
-subset = subset.query("domain != 'walker-walk' or (markov_lr == 0.0001 and inverse_coef == 30.0) or alg in ['state-sac', 'rad', 'curl']")
+# subset = subset.query("domain != 'cheetah-run' or (markov_lr == 0.0001 and inverse_coef == 30.0) or alg in ['state-sac', 'rad', 'curl']")
+# subset = subset.query("domain != 'cheetah-run' or (markov_lr == 0.001 and inverse_coef == 30.0) or alg in ['state-sac', 'rad', 'curl']")
+# subset = subset.query("domain != 'cheetah-run' or (markov_lr == 0.0001 and inverse_coef == 10.0) or (markov_lr == 0.0001 and inverse_coef == 30.0) or (markov_lr == 0.001 and inverse_coef == 30.0) or (markov_lr == 0.001 and inverse_coef == 10.0) or alg in ['state-sac', 'rad', 'curl']")
+subset = subset.query("domain != 'walker-walk' or (markov_lr == 0.001 and inverse_coef == 10.0) or alg in ['state-sac', 'rad', 'curl']")
+# subset = subset.query("domain != 'walker-walk' or (markov_lr == 0.0001 and inverse_coef == 30.0) or alg in ['state-sac', 'rad', 'curl']")
+# subset = subset.query("domain != 'walker-walk' or (markov_lr == 0.0001 and inverse_coef == 30.0) or (markov_lr == 0.001 and inverse_coef == 10.0) or alg in ['state-sac', 'rad', 'curl']")
+
 subset.loc[subset.alg.isin(['rad+markov-inv_coef=30', 'rad+markov-inv_coef=10', 'rad+markov-inv_coef=6', 'rad+markov-inv_coef=1']), 'alg'] = 'Markov+RAD'
 subset.loc[subset.alg.isin(['rad']), 'alg'] = 'RAD'
 subset.loc[subset.alg.isin(['state-sac']), 'alg'] = 'SAC (Expert)'
+
 # subset = subset.query("steps <= 100e3")
 # subset = subset.query("alg in ['rad', 'state-sac'] or (domain == 'cartpole-swingup' and markov_lr == 0.0001) or (domain != 'cartpole-swingup' and markov_lr == 0.001) or (domain == 'cheetah-run')")
 # subset = subset[subset.index % 5000 == 0]
 
 p = sns.color_palette('viridis', n_colors=len(subset['alg'].unique()), desat=0.5)
-p[-1] = (.67,.67,.64)
+p[-1] = (.60,.57,.57)
+# p[-1] = (.5,.3,.3)
 sns.relplot(
     data=subset,
     x='steps',
@@ -306,6 +341,7 @@ sns.relplot(
     hue='alg',
     hue_order=['Markov+RAD', 'RAD', 'SAC (Expert)'],
     style='alg',
+    # style='markov_lr',
     col='domain',
     col_wrap=3,
     style_order=['Markov+RAD', 'RAD', 'SAC (Expert)'],
