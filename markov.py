@@ -82,10 +82,13 @@ class MarkovHead(torch.nn.Module):
 
         self.inverse_coef = params['inverse_coef']
         self.contrastive_coef = params['contrastive_coef']
+        self.smoothness_coef = params['smoothness_coef']
+        self.smoothness_max_dz = params['smoothness_max_dz']
 
         self.bce = torch.nn.BCEWithLogitsLoss()
         if self.discrete:
             self.ce = torch.nn.CrossEntropyLoss()
+        self.mse = torch.nn.MSELoss()
 
     def forward(self, *args, **kwargs):
         raise NotImplementedError
@@ -115,7 +118,14 @@ class MarkovHead(torch.nn.Module):
         log_pr_real = self.discriminator(z0_extended, z1_pos_neg)
         l_contr = self.bce(input=log_pr_real, target=is_real_transition.unsqueeze(-1).float())
 
-        markov_loss = self.inverse_coef * l_inverse + self.contrastive_coef * l_contr
+        # Smoothness loss
+        with torch.no_grad():
+            dimensionality_scale_factor = torch.sqrt(z0.shape[-1])  # distance scales as ~sqrt(dim)
+        dz = torch.norm(z1 - z0, dim=-1, p=2) / dimensionality_scale_factor
+        excess = torch.nn.functional.relu(dz - self.smoothness_max_dz)
+        l_smoothness = self.mse(excess, torch.zeros_like(excess))
+
+        markov_loss = self.inverse_coef * l_inverse + self.contrastive_coef * l_contr + self.smoothness_coef * l_smoothness
         return markov_loss, l_inverse, l_contr
 
     def log(self, L, step):
