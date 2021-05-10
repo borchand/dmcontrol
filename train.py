@@ -84,8 +84,8 @@ def parse_args():
     parser.add_argument('--markov', default=False, action='store_true')
     parser.add_argument('--markov_inv_coef', default=1, type=float)
     parser.add_argument('--markov_contr_coef', default=1, type=float)
-    parser.add_argument('--smoothness_coef', default=10, type=float)
-    parser.add_argument('--smoothness_max_dz', default=0.1, type=float)
+    parser.add_argument('--markov_smoothness_coef', default=10, type=float)
+    parser.add_argument('--markov_smoothness_max_dz', default=0.1, type=float)
     parser.add_argument('--markov_lr', default=1e-3, type=float)
     parser.add_argument('--markov_beta', default=0.9, type=float)
     parser.add_argument('--tag', type=str)
@@ -98,8 +98,8 @@ def parse_args():
         'lr': args.markov_lr,
         'inverse_coef': args.markov_inv_coef,
         'contrastive_coef': args.markov_contr_coef,
-        'smoothness_coef': args.smoothness_coef,
-        'smoothness_max_dz': args.smoothness_max_dz,
+        'smoothness_coef': args.markov_smoothness_coef,
+        'smoothness_max_dz': args.markov_smoothness_max_dz,
         'optim_beta': args.markov_beta,
         'latent_dim': args.encoder_feature_dim,
         'layer_size': args.hidden_dim,
