@@ -12,7 +12,7 @@ OUT_DIM = {2: 39, 4: 35, 6: 31}
 OUT_DIM_64 = {2: 29, 4: 25, 6: 21}
 OUT_DIM_108 = {4: 47}
 
- 
+
 class PixelEncoder(nn.Module):
     """Convolutional encoder of pixels observations."""
     def __init__(self, obs_shape, feature_dim, num_layers=2, num_filters=32,output_logits=False):
@@ -22,7 +22,7 @@ class PixelEncoder(nn.Module):
         self.obs_shape = obs_shape
         self.feature_dim = feature_dim
         self.num_layers = num_layers
-        # try 2 5x5s with strides 2x2. with samep adding, it should reduce 84 to 21, so with valid, it should be even smaller than 21.
+        # try 2 5x5s with strides 2x2. with same padding, it should reduce 84 to 21, so with valid, it should be even smaller than 21.
         self.convs = nn.ModuleList(
             [nn.Conv2d(obs_shape[0], num_filters, 3, stride=2)]
         )

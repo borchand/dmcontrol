@@ -448,7 +448,11 @@ class RadSacAgent(object):
             L.log('train_markov/contr_loss', markov_contr_loss, step)
 
         self.markov_optimizer.zero_grad()
+        self.encoder_optimizer.zero_grad()
+
         markov_loss.backward()
+
+        self.encoder_optimizer.step()
         self.markov_optimizer.step()
 
         self.markov_head.log(L, step)
