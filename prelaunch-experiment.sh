@@ -2,11 +2,11 @@ if [ -z ${exp_name+x} ]; then echo "exp_name is unset. try exp_name=exp0_default
 inv_coef=1.0
 smoothness_coef=0.0
 smoothness_dz=0.01
-if command -v sbatch &> /dev/null
+if command -v sbatch &> /dev/null;
 then
     # backend=slurm
     prefix='PIPENV_IGNORE_VIRTUALENVS=1 xvfb-run -a pipenv run '
-elif command -v qsub &> /dev/null
+elif command -v qsub &> /dev/null;
     # backend=gridengine
     prefix="MUJOCO_GL=egl unbuffer xvfb-run -a "
 else

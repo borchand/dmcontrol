@@ -1,10 +1,10 @@
 if [ -z ${exp_name+x} ]; then echo "exp_name is unset. try exp_name=exp0_default"; exit 1; fi
 if [ -z ${tasks+x} ]; then echo "tasks is unset. try tasks=1-3"; exit 1; fi
 venv="--venv ./venv"
-if command -v sbatch &> /dev/null
+if command -v sbatch &> /dev/null;
 then
     backend=slurm
-elif command -v qsub &> /dev/null
+elif command -v qsub &> /dev/null;
     backend=gridengine
 else
     echo "no backend detected"; exit 1
