@@ -82,6 +82,10 @@ def parse_args():
     # Markov abstraction
     parser.add_argument('--disable_rad', default=False, action='store_true')
     parser.add_argument('--markov', default=False, action='store_true')
+    parser.add_argument('--markov_pretrain_steps', default=0, type=int,
+        help='Number of steps to pretrain the Markov abstraction on the first `init_steps` experiences')
+    parser.add_argument('--markov_catchup_steps', default=0, type=int,
+        help='Number of agent updates to catch up on after pretraining is complete')
     parser.add_argument('--markov_inv_coef', default=1, type=float)
     parser.add_argument('--markov_contr_coef', default=1, type=float)
     parser.add_argument('--markov_smoothness_coef', default=10, type=float)
@@ -95,6 +99,8 @@ def parse_args():
 
     markov_params = {
         'enable': args.markov,
+        'pretrain_steps': args.markov_pretrain_steps,
+        'catchup_steps': args.markov_catchup_steps,
         'lr': args.markov_lr,
         'inverse_coef': args.markov_inv_coef,
         'contrastive_coef': args.markov_contr_coef,
@@ -135,7 +141,7 @@ def parse_args():
 
     if args.test_mode:
         print("Test mode enabled; modifying args for speed.")
-        args.init_steps = 2
+        args.init_steps = 4
         args.num_train_steps = 8
         args.eval_freq = 4
         args.num_eval_episodes = 2
@@ -323,6 +329,8 @@ def main():
 
     L = Logger(args.work_dir, use_tb=args.save_tb)
 
+    did_pretrain = False
+
     episode, episode_reward, done = 0, 0, True
     best_avg_reward = -np.inf
     start_time = time.time()
@@ -367,6 +375,17 @@ def main():
 
         # run training update
         if step >= args.init_steps:
+            if not did_pretrain and args.markov and args.markov_pretrain_steps > 0:
+                print('Pretraining Markov abstraction...')
+                for pretrain_step in tqdm(range(args.markov_pretrain_steps)):
+                    pretrain_obs, pretrain_action, _, pretrain_next_obs, _ = replay_buffer.sample_rad(agent.augs_funcs)
+                    agent.update_markov_head(pretrain_obs, pretrain_action, pretrain_next_obs, L, pretrain_step)
+                if args.markov_catchup_steps > 0:
+                    print('Catching up on agent updates...')
+                    for catchup_step in tqdm(range(step-args.markov_catchup_steps, step)):
+                        agent.update(replay_buffer, L, catchup_step)
+                did_pretrain = True
+
             num_updates = 1
             for _ in range(num_updates):
                 agent.update(replay_buffer, L, step)
