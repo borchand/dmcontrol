@@ -7,6 +7,7 @@ then
     # backend=slurm
     prefix='PIPENV_IGNORE_VIRTUALENVS=1 xvfb-run -a pipenv run '
 elif command -v qsub &> /dev/null;
+then
     # backend=gridengine
     prefix="MUJOCO_GL=egl unbuffer xvfb-run -a "
 else

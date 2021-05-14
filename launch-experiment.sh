@@ -5,6 +5,7 @@ if command -v sbatch &> /dev/null;
 then
     backend=slurm
 elif command -v qsub &> /dev/null;
+then
     backend=gridengine
 else
     echo "no backend detected"; exit 1
