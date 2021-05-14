@@ -120,13 +120,13 @@ class MarkovHead(torch.nn.Module):
 
         # Smoothness loss
         with torch.no_grad():
-            dimensionality_scale_factor = torch.sqrt(z0.shape[-1])  # distance scales as ~sqrt(dim)
+            dimensionality_scale_factor = torch.sqrt(torch.as_tensor(z0.shape).float()[-1])  # distance scales as ~sqrt(dim)
         dz = torch.norm(z1 - z0, dim=-1, p=2) / dimensionality_scale_factor
         excess = torch.nn.functional.relu(dz - self.smoothness_max_dz)
         l_smoothness = self.mse(excess, torch.zeros_like(excess))
 
         markov_loss = self.inverse_coef * l_inverse + self.contrastive_coef * l_contr + self.smoothness_coef * l_smoothness
-        return markov_loss, l_inverse, l_contr
+        return markov_loss, l_inverse, l_contr, l_smoothness
 
     def log(self, L, step):
         if step % self.log_freq != 0:
