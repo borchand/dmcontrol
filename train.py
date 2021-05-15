@@ -84,6 +84,7 @@ def parse_args():
     parser.add_argument('--markov', default=False, action='store_true')
     parser.add_argument('--markov_pretrain_steps', default=0, type=int,
         help='Number of steps to pretrain the Markov abstraction on the first `init_steps` experiences')
+    parser.add_argument('--markov_pretrain_batch_size', default=512)
     parser.add_argument('--markov_catchup_steps', default=0, type=int,
         help='Number of agent updates to catch up on after pretraining is complete')
     parser.add_argument('--markov_inv_coef', default=1, type=float)
@@ -100,6 +101,7 @@ def parse_args():
     markov_params = {
         'enable': args.markov,
         'pretrain_steps': args.markov_pretrain_steps,
+        'pretrain_batch_size': args.markov_pretrain_batch_size,
         'catchup_steps': args.markov_catchup_steps,
         'lr': args.markov_lr,
         'inverse_coef': args.markov_inv_coef,
@@ -378,7 +380,7 @@ def main():
             if not did_pretrain and args.markov and args.markov_pretrain_steps > 0:
                 print('Pretraining Markov abstraction...')
                 for pretrain_step in tqdm(range(args.markov_pretrain_steps)):
-                    pretrain_obs, pretrain_action, _, pretrain_next_obs, _ = replay_buffer.sample_rad(agent.augs_funcs)
+                    pretrain_obs, pretrain_action, _, pretrain_next_obs, _ = replay_buffer.sample_rad(agent.augs_funcs, args.markov_pretrain_batch_size)
                     agent.update_markov_head(pretrain_obs, pretrain_action, pretrain_next_obs, L, pretrain_step)
                 if args.markov_catchup_steps > 0:
                     print('Catching up on agent updates...')
