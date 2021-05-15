@@ -84,7 +84,7 @@ def parse_args():
     parser.add_argument('--markov', default=False, action='store_true')
     parser.add_argument('--markov_pretrain_steps', default=0, type=int,
         help='Number of steps to pretrain the Markov abstraction on the first `init_steps` experiences')
-    parser.add_argument('--markov_pretrain_batch_size', default=512)
+    parser.add_argument('--markov_pretrain_batch_size', default=512, type=int)
     parser.add_argument('--markov_catchup_steps', default=0, type=int,
         help='Number of agent updates to catch up on after pretraining is complete')
     parser.add_argument('--markov_inv_coef', default=1, type=float)
