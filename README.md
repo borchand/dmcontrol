@@ -12,12 +12,15 @@ All of the dependencies are in the `conda_env.yml` file. They can be installed m
 conda env create -f conda_env.yml
 ```
 
+If that doesn't work, use pip to install either of the requirements files.
+
+
 ## Instructions
 To reproduce our results use the following commands.
 
 ### Markov
 ```sh
-# for seed in range(10):
+# for seed in {1..10}:
 #   for domain, task in [
 #     ('ball_in_cup', 'catch'),
 #     ('cartpole', 'swingup'),
