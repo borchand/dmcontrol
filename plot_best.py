@@ -10,34 +10,13 @@ import seaborn as sns
 
 WINDOW_SIZE = 5
 
-# sac_hyperparams = {
-#      1: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 1, 'domain': 'cartpole-swingup', 'action_repeat': 8},
-#      2: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 2, 'domain': 'cartpole-swingup', 'action_repeat': 8},
-#      3: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 3, 'domain': 'cartpole-swingup', 'action_repeat': 8},
-#      4: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 1, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
-#      5: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 2, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
-#      6: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 3, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
-#      7: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 1, 'domain': 'cheetah-run', 'action_repeat': 4},
-#      8: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 2, 'domain': 'cheetah-run', 'action_repeat': 4},
-#      9: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 3, 'domain': 'cheetah-run', 'action_repeat': 4},
-#     10: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 1, 'domain': 'finger-spin', 'action_repeat': 2},
-#     11: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 2, 'domain': 'finger-spin', 'action_repeat': 2},
-#     12: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 3, 'domain': 'finger-spin', 'action_repeat': 2},
-#     13: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 1, 'domain': 'reacher-easy', 'action_repeat': 4},
-#     14: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 2, 'domain': 'reacher-easy', 'action_repeat': 4},
-#     15: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 3, 'domain': 'reacher-easy', 'action_repeat': 4},
-#     16: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 1, 'domain': 'walker-walk', 'action_repeat': 2},
-#     17: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 2, 'domain': 'walker-walk', 'action_repeat': 2},
-#     18: {'alg': 'state-sac', 'markov_lr': 0, 'seed': 3, 'domain': 'walker-walk', 'action_repeat': 2},
-# }
-
 dbc_domains = {
-    'cheetah-run': range(1,4),
-    'finger-spin': range(1,4),
-    'walker-walk': range(1,4),
-    'reacher-easy': range(1,4),
+    # 'cheetah-run': range(1,4),
+    # 'finger-spin': range(1,4),
+    # 'walker-walk': range(1,4),
+    # 'reacher-easy': range(1,4),
     'ball-catch': range(1,4),
-    'cartpole-swingup': range(1,4),
+    # 'cartpole-swingup': range(1,4),
 }
 dbc_hyperparams = dict(enumerate([{
     'alg': 'dbc',
@@ -51,26 +30,77 @@ for i, d in dbc_hyperparams.items():
     if 'ball' in d['domain']:
         d.update({'domain': 'ball_in_cup-catch'})
 
-seed_start = 4
-exp_shortname = 'exp6_markov'
-exp_dir = 'exp6_inv0.1_relu10_dz0.01'
-smoothness_domains = [
-    # domain-task, seeds, markov_lr, action_repeat
-    ('cheetah-run', 3, 1e-4, 4),
-    ('finger-spin', 3, 1e-3, 2),
-    ('walker-walk', 3, 1e-3, 2),
-    ('reacher-easy', 3, 1e-3, 4),
-    ('ball_in_cup-catch', 3, 1e-3, 4),
-    ('cartpole-swingup', 3, 1e-4, 8),
+
+exp_names = {
+    7: 'exp7_markov_fix',
+    8: 'exp8_markov_relu',
+    9: 'exp9_markov_pretrain',
+    10: 'exp10_markov_pretrain_bs512',
+    11: 'exp11_markov_relu_inv0.1',
+    12: 'exp12_markov_pretrain_bs512_inv10',
+    13: 'exp13_markov_pretrain_bs512_inv1_lr5e-5',
+    16: 'exp16_markov_pretrain_bs512_inv1_relu30',
+    23: 'exp23_markov_pretrain_bs512_inv30',
+    24: 'exp24_markov_pretrain_bs512_inv10_relu30',
+    26: 'exp26_markov_pretrain_bs512_inv30_relu30',
+    27: 'exp27_disable_smoothness',
+}
+
+def rg(seed_first, seed_last):
+    return list(range(seed_first, seed_last+1))
+markov_domains = [
+    # domain-task,        exp, seeds, markov_lr, action_repeat
+    # ('cheetah-run',        13, rg(1, 6), 5e-5, 4),
+    ('cheetah-run',        16, rg(1, 10), 2e-4, 4), # 10
+    ('finger-spin',        10, rg(1, 10), 1e-3, 2), # 10
+    ('walker-walk',        10, rg(1, 10), 1e-3, 2), # 10
+    ('reacher-easy',       26, rg(1, 10), 1e-3, 4), # 12
+    ('ball_in_cup-catch',  26, rg(1, 10), 1e-3, 4), # 12
+    ('cartpole-swingup',   10, rg(1, 10), 1e-3, 8), # 10
 ]
-smoothness_hyperparams = dict(enumerate([{
-    'alg': exp_shortname,
+# markov_domains = [
+#     # domain-task,        exp, seeds, markov_lr, action_repeat
+#     # ('cheetah-run',        13, rg(1, 6), 5e-5, 4),
+#     ('cheetah-run',        27, rg(1, 6), 2e-4, 4), # 10
+#     ('finger-spin',        27, rg(1, 6), 1e-3, 2), # 10
+#     ('walker-walk',        27, rg(1, 6), 1e-3, 2), # 10
+#     ('reacher-easy',       27, rg(1, 6), 1e-3, 4), # 12
+#     ('ball_in_cup-catch',  27, rg(1, 6), 1e-3, 4), # 12
+#     ('cartpole-swingup',   27, rg(1, 6), 1e-3, 8), # 10
+# ]
+markov_hyperparams = dict(enumerate([{
+    'alg': 'rad+markov',
     'markov_lr': markov_lr,
     'action_repeat': action_repeat,
     'domain': domain,
     'seed': seed,
-    'backup_file': list(sorted(glob.glob('tmp/{}/{}-*_{}/eval.log'.format(exp_dir, domain, seed))))[-1]
-} for (domain, n_seeds, markov_lr, action_repeat) in smoothness_domains for seed in range(seed_start, seed_start+n_seeds)]))
+    'backup_file': list(sorted(glob.glob('tmp/{}/{}-*_{}/eval.log'.format(exp_names[exp], domain, seed))))[-1]
+} for (domain, exp, seeds, markov_lr, action_repeat) in markov_domains for seed in seeds]))
+
+
+algs = {
+    'DBC': 'bisim_coef0.5_probabilistic_nobg',
+    'DeepMDP': 'deepmdp_identity_nobg',
+    'CPC': 'baseline_contrastive_nobg',
+    'Reconstruction': 'baseline_pixel_nobg',
+}
+dbc_domains = [
+    # domain-task,        seeds,     action_repeat
+    ('cheetah-run',       rg(1, 10), 2),
+    ('finger-spin',       rg(1, 10), 2),
+    ('walker-walk',       rg(1, 10), 2),
+    ('reacher-easy',      rg(1, 10), 2),
+    # ('ball_in_cup-catch', rg(1, 10), 2),
+    ('cartpole-swingup',  rg(1, 10), 2),
+]
+dbc_hyperparams = dict(enumerate([{
+    'alg': alg,
+    'action_repeat': action_repeat,
+    'domain': domain,
+    'seed': seed,
+    'backup_file': list(sorted(glob.glob('tmp/dbc/{}/{}/seed_{}/eval.log'.format(domain.replace('-','_'), alg, seed))))[-1]
+} for (domain, exp, seeds, markov_lr, action_repeat) in markov_domains for seed in seeds]))
+
 
 
 rad_hyperparams = {
@@ -94,35 +124,28 @@ rad_hyperparams = {
   18: {'alg': 'rad', 'markov_lr': 0, 'seed': 3, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad/walker-walk-01-31-im84-b128-s3-pixel-tuning-rad_3/eval.log'},
 }
 
-markov_hyperparams = {
-   2: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
-   5: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
-   8: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
-  12: {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 1, 'domain': 'cartpole-swingup', 'action_repeat': 8},
-  15: {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 2, 'domain': 'cartpole-swingup', 'action_repeat': 8},
-  18: {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 3, 'domain': 'cartpole-swingup', 'action_repeat': 8},
-  81: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 1, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-01-31-im108-b128-s1-pixel-tuning-rad-markov-big-inv_1/eval.log'},
-  82: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 2, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-01-31-im108-b128-s2-pixel-tuning-rad-markov-big-inv_2/eval.log'},
-  83: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 3, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-01-31-im108-b128-s3-pixel-tuning-rad-markov-big-inv_3/eval.log'},
-  29: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-01-30-im108-b128-s1-pixel-tuning-rad-markov_29/eval.log'},
-  32: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-01-30-im108-b128-s2-pixel-tuning-rad-markov_32/eval.log'},
-  35: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-01-30-im108-b128-s3-pixel-tuning-rad-markov_35/eval.log'},
-  38: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'reacher-easy', 'action_repeat': 4},
-  41: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'reacher-easy', 'action_repeat': 4},
-  44: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'reacher-easy', 'action_repeat': 4},
-  91: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 1, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s1-pixel-tuning-rad-markov-big-inv2_7/eval.log'},
-  92: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 2, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s2-pixel-tuning-rad-markov-big-inv2_8/eval.log'},
-  93: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 3, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s3-pixel-tuning-rad-markov-big-inv2_9/eval.log'},
-}
-
-# curl_hyperparams = {
-#     1: {'alg': 'curl', 'markov_lr': 0, 'seed': 1, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': '../gridworlds/dmcontrol/experiments/dm2gym-Ball_in_cupCatch-v0/curl-paper-results/curl/seed_001/scores.csv'},
-#     2: {'alg': 'curl', 'markov_lr': 0, 'seed': 1, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': '../gridworlds/dmcontrol/experiments/dm2gym-CartpoleSwingup-v0/curl-paper-results/curl/seed_001/scores.csv'},
-#     3: {'alg': 'curl', 'markov_lr': 0, 'seed': 1, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': '../gridworlds/dmcontrol/experiments/dm2gym-CheetahRun-v0/curl-paper-results/curl/seed_001/scores.csv'},
-#     4: {'alg': 'curl', 'markov_lr': 0, 'seed': 1, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': '../gridworlds/dmcontrol/experiments/dm2gym-FingerSpin-v0/curl-paper-results/curl/seed_001/scores.csv'},
-#     5: {'alg': 'curl', 'markov_lr': 0, 'seed': 1, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': '../gridworlds/dmcontrol/experiments/dm2gym-ReacherEasy-v0/curl-paper-results/curl/seed_001/scores.csv'},
-#     6: {'alg': 'curl', 'markov_lr': 0, 'seed': 1, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': '../gridworlds/dmcontrol/experiments/dm2gym-WalkerWalk-v0/curl-paper-results/curl/seed_001/scores.csv'},
+# markov_hyperparams = {
+#    2: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
+#    5: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
+#    8: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'ball_in_cup-catch', 'action_repeat': 4},
+#   12: {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 1, 'domain': 'cartpole-swingup', 'action_repeat': 8},
+#   15: {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 2, 'domain': 'cartpole-swingup', 'action_repeat': 8},
+#   18: {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 3, 'domain': 'cartpole-swingup', 'action_repeat': 8},
+#   81: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 1, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-01-31-im108-b128-s1-pixel-tuning-rad-markov-big-inv_1/eval.log'},
+#   82: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 2, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-01-31-im108-b128-s2-pixel-tuning-rad-markov-big-inv_2/eval.log'},
+#   83: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 3, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-01-31-im108-b128-s3-pixel-tuning-rad-markov-big-inv_3/eval.log'},
+#   29: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-01-30-im108-b128-s1-pixel-tuning-rad-markov_29/eval.log'},
+#   32: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-01-30-im108-b128-s2-pixel-tuning-rad-markov_32/eval.log'},
+#   35: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-01-30-im108-b128-s3-pixel-tuning-rad-markov_35/eval.log'},
+#   38: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'reacher-easy', 'action_repeat': 4},
+#   41: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'reacher-easy', 'action_repeat': 4},
+#   44: {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'reacher-easy', 'action_repeat': 4},
+#   91: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 1, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s1-pixel-tuning-rad-markov-big-inv2_7/eval.log'},
+#   92: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 2, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s2-pixel-tuning-rad-markov-big-inv2_8/eval.log'},
+#   93: {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 3, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-02-im84-b128-s3-pixel-tuning-rad-markov-big-inv2_9/eval.log'},
 # }
+
+
 
 curl_hyperparams = [
     {'alg': 'curl', 'markov_lr': 0, 'seed': 1, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/curl/cart/cartpole-swingup-03-20-im84-b128-s1-pixel/eval.log'},
@@ -251,48 +274,48 @@ sac_hyperparams = [
 ]
 
 additional_seeds = [
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s4-pixel-final-rad-markov-ball_in_cup_4/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 5, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s5-pixel-final-rad-markov-ball_in_cup_5/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 6, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s6-pixel-final-rad-markov-ball_in_cup_6/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 7, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s7-pixel-final-rad-markov-ball_in_cup_7/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 8, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s8-pixel-final-rad-markov-ball_in_cup_8/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 9, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s9-pixel-final-rad-markov-ball_in_cup_9/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 10, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s10-pixel-final-rad-markov-ball_in_cup_10/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 4, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s4-pixel-final-rad-markov-cartpole_4/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 5, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s5-pixel-final-rad-markov-cartpole_5/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 6, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s6-pixel-final-rad-markov-cartpole_6/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 7, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s7-pixel-final-rad-markov-cartpole_7/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 8, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s8-pixel-final-rad-markov-cartpole_8/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 9, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s9-pixel-final-rad-markov-cartpole_9/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 10, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s10-pixel-final-rad-markov-cartpole_10/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 4, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s4-pixel-markov-seeds-cheetah_1/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 5, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s5-pixel-markov-seeds-cheetah_2/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 6, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s6-pixel-markov-seeds-cheetah_3/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 7, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s7-pixel-markov-seeds-cheetah_4/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 8, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s8-pixel-markov-seeds-cheetah_5/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 9, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s9-pixel-markov-seeds-cheetah_6/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 10, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s10-pixel-markov-seeds-cheetah_7/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s4-pixel-final-rad-markov-finger_4/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 5, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s5-pixel-final-rad-markov-finger_5/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 6, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s6-pixel-final-rad-markov-finger_6/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 7, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s7-pixel-final-rad-markov-finger_7/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 8, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s8-pixel-final-rad-markov-finger_8/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 9, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s9-pixel-final-rad-markov-finger_9/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 10, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s10-pixel-final-rad-markov-finger_10/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s4-pixel-final-rad-markov-reacher_4/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 5, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s5-pixel-final-rad-markov-reacher_5/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 6, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s6-pixel-final-rad-markov-reacher_6/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 7, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s7-pixel-final-rad-markov-reacher_7/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 8, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s8-pixel-final-rad-markov-reacher_8/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 9, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s9-pixel-final-rad-markov-reacher_9/eval.log'},
-    {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 10, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s10-pixel-final-rad-markov-reacher_10/eval.log'},
-    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 4, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s4-pixel-markov-seeds-walker_1/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 5, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s5-pixel-markov-seeds-walker_2/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 6, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s6-pixel-markov-seeds-walker_3/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 7, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s7-pixel-markov-seeds-walker_4/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 8, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s8-pixel-markov-seeds-walker_5/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 9, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s9-pixel-markov-seeds-walker_6/eval.log'},
-    {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 10, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s10-pixel-markov-seeds-walker_7/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s4-pixel-final-rad-markov-ball_in_cup_4/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 5, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s5-pixel-final-rad-markov-ball_in_cup_5/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 6, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s6-pixel-final-rad-markov-ball_in_cup_6/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 7, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s7-pixel-final-rad-markov-ball_in_cup_7/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 8, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s8-pixel-final-rad-markov-ball_in_cup_8/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 9, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s9-pixel-final-rad-markov-ball_in_cup_9/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 10, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/ball_in_cup-catch-02-01-im108-b128-s10-pixel-final-rad-markov-ball_in_cup_10/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 4, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s4-pixel-final-rad-markov-cartpole_4/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 5, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s5-pixel-final-rad-markov-cartpole_5/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 6, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s6-pixel-final-rad-markov-cartpole_6/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 7, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s7-pixel-final-rad-markov-cartpole_7/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 8, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s8-pixel-final-rad-markov-cartpole_8/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 9, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s9-pixel-final-rad-markov-cartpole_9/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-4, 'seed': 10, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/rad-markov/cartpole-swingup-02-01-im108-b128-s10-pixel-final-rad-markov-cartpole_10/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 4, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s4-pixel-markov-seeds-cheetah_1/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 5, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s5-pixel-markov-seeds-cheetah_2/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 6, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s6-pixel-markov-seeds-cheetah_3/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 7, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s7-pixel-markov-seeds-cheetah_4/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 8, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s8-pixel-markov-seeds-cheetah_5/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 9, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s9-pixel-markov-seeds-cheetah_6/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-4, 'seed': 10, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/cheetah-run-02-03-im108-b128-s10-pixel-markov-seeds-cheetah_7/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s4-pixel-final-rad-markov-finger_4/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 5, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s5-pixel-final-rad-markov-finger_5/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 6, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s6-pixel-final-rad-markov-finger_6/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 7, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s7-pixel-final-rad-markov-finger_7/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 8, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s8-pixel-final-rad-markov-finger_8/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 9, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s9-pixel-final-rad-markov-finger_9/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 10, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/finger-spin-02-01-im108-b128-s10-pixel-final-rad-markov-finger_10/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s4-pixel-final-rad-markov-reacher_4/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 5, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s5-pixel-final-rad-markov-reacher_5/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 6, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s6-pixel-final-rad-markov-reacher_6/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 7, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s7-pixel-final-rad-markov-reacher_7/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 8, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s8-pixel-final-rad-markov-reacher_8/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 9, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s9-pixel-final-rad-markov-reacher_9/eval.log'},
+    # {'alg': 'rad+markov', 'markov_lr': 1e-3, 'seed': 10, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/rad-markov/reacher-easy-02-01-im108-b128-s10-pixel-final-rad-markov-reacher_10/eval.log'},
+    # # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 4, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s4-pixel-markov-seeds-walker_1/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 5, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s5-pixel-markov-seeds-walker_2/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 6, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s6-pixel-markov-seeds-walker_3/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 7, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s7-pixel-markov-seeds-walker_4/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 8, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s8-pixel-markov-seeds-walker_5/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 9, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s9-pixel-markov-seeds-walker_6/eval.log'},
+    # {'alg': 'rad+markov', 'inverse_coef': 10, 'markov_lr': 1e-3, 'seed': 10, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad-markov/walker-walk-02-03-im84-b128-s10-pixel-markov-seeds-walker_7/eval.log'},
 ] + [
     {'alg': 'rad', 'markov_lr': 0, 'seed': 4, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad/ball_in_cup-catch-02-02-im108-b128-s4-pixel-rad-seeds_1/eval.log'},
     {'alg': 'rad', 'markov_lr': 0, 'seed': 5, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/rad/ball_in_cup-catch-02-02-im108-b128-s5-pixel-rad-seeds_2/eval.log'},
@@ -336,68 +359,11 @@ additional_seeds = [
     {'alg': 'rad', 'markov_lr': 0, 'seed': 8, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad/walker-walk-03-11-im84-b128-s8-pixel-rad-seeds_16/eval.log'},
     {'alg': 'rad', 'markov_lr': 0, 'seed': 9, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad/walker-walk-03-12-im84-b128-s9-pixel-rad-seeds_17/eval.log'},
     {'alg': 'rad', 'markov_lr': 0, 'seed': 10, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/rad/walker-walk-03-12-im84-b128-s10-pixel-rad-seeds_18/eval.log'},
-]# + [
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/ball_in_cup-catch-02-02-im108-b128-s1-pixel-ablations-rad-markov-ball_in_cup_1/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/ball_in_cup-catch-02-02-im108-b128-s2-pixel-ablations-rad-markov-ball_in_cup_2/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/ball_in_cup-catch-02-02-im108-b128-s3-pixel-ablations-rad-markov-ball_in_cup_3/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/ball_in_cup-catch-02-02-im108-b128-s4-pixel-ablations-rad-markov-ball_in_cup_4/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-4, 'seed': 1, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/markov-no-rad/cartpole-swingup-02-02-im108-b128-s1-pixel-ablations-rad-markov-cartpole_1/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-4, 'seed': 2, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/markov-no-rad/cartpole-swingup-02-02-im108-b128-s2-pixel-ablations-rad-markov-cartpole_2/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-4, 'seed': 3, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/markov-no-rad/cartpole-swingup-02-02-im108-b128-s3-pixel-ablations-rad-markov-cartpole_3/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-4, 'seed': 4, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/markov-no-rad/cartpole-swingup-02-02-im108-b128-s4-pixel-ablations-rad-markov-cartpole_4/eval.log'},
-#     # {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-4, 'seed': 1, 'inverse_coef': 10.0, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/cheetah-run-02-02-im108-b128-s4-pixel-rad-seeds_9/eval.log'},
-#     # {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-4, 'seed': 2, 'inverse_coef': 10.0, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/cheetah-run-02-02-im108-b128-s5-pixel-rad-seeds_10/eval.log'},
-#     # {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-4, 'seed': 3, 'inverse_coef': 10.0, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/cheetah-run-02-02-im108-b128-s6-pixel-rad-seeds_11/eval.log'},
-#     # {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-4, 'seed': 4, 'inverse_coef': 10.0, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/cheetah-run-02-02-im108-b128-s7-pixel-rad-seeds_12/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/markov-no-rad/finger-spin-02-02-im108-b128-s1-pixel-ablations-rad-markov-finger_1/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/markov-no-rad/finger-spin-02-02-im108-b128-s2-pixel-ablations-rad-markov-finger_2/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/markov-no-rad/finger-spin-02-02-im108-b128-s3-pixel-ablations-rad-markov-finger_3/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/markov-no-rad/finger-spin-02-02-im108-b128-s4-pixel-ablations-rad-markov-finger_4/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/reacher-easy-02-02-im108-b128-s1-pixel-ablations-rad-markov-reacher_1/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/reacher-easy-02-02-im108-b128-s2-pixel-ablations-rad-markov-reacher_2/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/reacher-easy-02-02-im108-b128-s3-pixel-ablations-rad-markov-reacher_3/eval.log'},
-#     {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 4, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/markov-no-rad/reacher-easy-02-02-im108-b128-s4-pixel-ablations-rad-markov-reacher_4/eval.log'},
-#     # {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 1, 'inverse_coef': 10.0, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/markov-no-rad/walker-walk-02-02-im84-b128-s4-pixel-rad-seeds_21/eval.log'},
-#     # {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 2, 'inverse_coef': 10.0, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/markov-no-rad/walker-walk-02-02-im84-b128-s5-pixel-rad-seeds_22/eval.log'},
-#     # {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 3, 'inverse_coef': 10.0, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/markov-no-rad/walker-walk-02-02-im84-b128-s6-pixel-rad-seeds_23/eval.log'},
-#     # {'alg': 'Markov+SAC (visual)', 'markov_lr': 1e-3, 'seed': 4, 'inverse_coef': 10.0, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/markov-no-rad/walker-walk-02-02-im84-b128-s7-pixel-rad-seeds_24/eval.log'},
-# ] + [
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/visual/ball_in_cup-catch-02-03-im108-b128-s1-pixel-visual-seeds_1/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/visual/ball_in_cup-catch-02-03-im108-b128-s2-pixel-visual-seeds_2/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'ball_in_cup-catch', 'action_repeat': 4, 'backup_file': 'tmp/visual/ball_in_cup-catch-02-03-im108-b128-s3-pixel-visual-seeds_3/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-4, 'seed': 1, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/visual/cartpole-swingup-02-03-im108-b128-s1-pixel-visual-seeds_4/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-4, 'seed': 2, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/visual/cartpole-swingup-02-03-im108-b128-s2-pixel-visual-seeds_5/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-4, 'seed': 3, 'domain': 'cartpole-swingup', 'action_repeat': 8, 'backup_file': 'tmp/visual/cartpole-swingup-02-03-im108-b128-s3-pixel-visual-seeds_6/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-4, 'seed': 1, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/visual/cheetah-run-02-03-im108-b128-s1-pixel-visual-seeds_7/eval.log', 'inverse_coef': 10.0},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-4, 'seed': 2, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/visual/cheetah-run-02-03-im108-b128-s2-pixel-visual-seeds_8/eval.log', 'inverse_coef': 10.0},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-4, 'seed': 3, 'domain': 'cheetah-run', 'action_repeat': 4, 'backup_file': 'tmp/visual/cheetah-run-02-03-im108-b128-s3-pixel-visual-seeds_9/eval.log', 'inverse_coef': 10.0},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/visual/finger-spin-02-03-im108-b128-s1-pixel-visual-seeds_10/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/visual/finger-spin-02-03-im108-b128-s2-pixel-visual-seeds_11/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'finger-spin', 'action_repeat': 2, 'backup_file': 'tmp/visual/finger-spin-02-03-im108-b128-s3-pixel-visual-seeds_12/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/visual/reacher-easy-02-03-im108-b128-s1-pixel-visual-seeds_13/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/visual/reacher-easy-02-03-im108-b128-s2-pixel-visual-seeds_14/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'reacher-easy', 'action_repeat': 4, 'backup_file': 'tmp/visual/reacher-easy-02-03-im108-b128-s3-pixel-visual-seeds_15/eval.log'},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 1, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/visual/walker-walk-02-03-im84-b128-s1-pixel-visual-seeds_16/eval.log', 'inverse_coef': 10.0},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 2, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/visual/walker-walk-02-03-im84-b128-s2-pixel-visual-seeds_17/eval.log', 'inverse_coef': 10.0},
-#     {'alg': 'SAC (visual)', 'markov_lr': 1e-3, 'seed': 3, 'domain': 'walker-walk', 'action_repeat': 2, 'backup_file': 'tmp/visual/walker-walk-02-03-im84-b128-s3-pixel-visual-seeds_18/eval.log', 'inverse_coef': 10.0},
-# ]
+]
 
 dfs = []
 unique_id = 0
 #%%
-# for i in sac_hyperparams.keys():
-#     filepath = 'logs/state-sac_%d.g' % i
-#     params = sac_hyperparams[i]
-#     data = pd.read_csv(filepath, names=['steps', 'reward'])
-#     data['episode'] = data.steps / 1000 * params['action_repeat']
-#     data = data.set_index('steps')
-#     data['cumulative_reward'] = (data.reward*10).cumsum()
-#     data['cumulative_reward_per_episode'] = data.cumulative_reward / data.episode * params['action_repeat']
-#     data['unique_id'] = unique_id
-#     unique_id += 1
-#     for k, v in params.items():
-#         data[k] = v
-#     dfs.append(data)
 
 for i, params in enumerate(sac_hyperparams):
     if params.get('backup_file', False):
@@ -454,8 +420,8 @@ for i in dbc_hyperparams.keys():
         data[k] = v
     dfs.append(data)
 
-for i in smoothness_hyperparams.keys():
-    params = smoothness_hyperparams[i]
+for i in markov_hyperparams.keys():
+    params = markov_hyperparams[i]
     data = pd.read_json(params['backup_file'], lines=True)
     data = data.rename(columns={'step': 'steps', 'episode_reward': 'reward'}).set_index('steps')
     data['cumulative_reward'] = data.reward.cumsum()
@@ -486,26 +452,26 @@ for i in smoothness_hyperparams.keys():
 
 #%%
 
-for i in markov_hyperparams.keys():
-    filepath = 'logs/tuning-rad-markov_%d.g' % i
-    params = markov_hyperparams[i]
-    if params.get('backup_file', False):
-        data = pd.read_json(params['backup_file'], lines=True)
-        data = data.rename(columns={'step': 'steps', 'mean_episode_reward': 'reward'}).drop(columns=['episode_reward', 'eval_time', 'best_episode_reward']).set_index('steps')
-    else:
-        data = pd.read_csv(filepath, names=['steps','reward'])
-        data['episode'] = data.steps / 1000 * params['action_repeat']
-        data = data.set_index('steps')
-    data['cumulative_reward'] = data.reward.cumsum()
-    data['cumulative_reward_per_episode'] = data.cumulative_reward / data.episode * params['action_repeat']
-    data['unique_id'] = unique_id
-    unique_id += 1
-    data.reward = data.reward.rolling(WINDOW_SIZE).mean()
-    for k, v in params.items():
-        if k == 'backup_file':
-            continue
-        data[k] = v
-    dfs.append(data)
+# for i in markov_hyperparams.keys():
+#     filepath = 'logs/tuning-rad-markov_%d.g' % i
+#     params = markov_hyperparams[i]
+#     if params.get('backup_file', False):
+#         data = pd.read_json(params['backup_file'], lines=True)
+#         data = data.rename(columns={'step': 'steps', 'mean_episode_reward': 'reward'}).drop(columns=['episode_reward', 'eval_time', 'best_episode_reward']).set_index('steps')
+#     else:
+#         data = pd.read_csv(filepath, names=['steps','reward'])
+#         data['episode'] = data.steps / 1000 * params['action_repeat']
+#         data = data.set_index('steps')
+#     data['cumulative_reward'] = data.reward.cumsum()
+#     data['cumulative_reward_per_episode'] = data.cumulative_reward / data.episode * params['action_repeat']
+#     data['unique_id'] = unique_id
+#     unique_id += 1
+#     data.reward = data.reward.rolling(WINDOW_SIZE).mean()
+#     for k, v in params.items():
+#         if k == 'backup_file':
+#             continue
+#         data[k] = v
+#     dfs.append(data)
 
 
 for i, params in enumerate(additional_seeds):
@@ -550,8 +516,8 @@ for i, params in enumerate(curl_hyperparams):
 
 #%%
 data = pd.concat(dfs, axis=0)
-data.loc[data.inverse_coef.isnull() & (data.markov_lr > 0), 'inverse_coef'] = 1
-data.loc[data.inverse_coef.isnull() & (data.markov_lr == 0), 'inverse_coef'] = 0
+# data.loc[data.inverse_coef.isnull() & (data.markov_lr > 0), 'inverse_coef'] = 1
+# data.loc[data.inverse_coef.isnull() & (data.markov_lr == 0), 'inverse_coef'] = 0
 # data.loc[((data['inverse_coef'] == 1) & (data['alg'] == 'rad+markov')), 'alg'] = 'rad+markov-inv_coef=1'
 #%%
 # for d in ['cartpole-swingup']:#list(data.domain.unique()):
@@ -565,7 +531,7 @@ subset.seed.unique()
 #%%
 
 subset = data
-# subset = subset.query("alg != 'curl'")
+# subset = subset.query("alg == 'rad+markov'")
 # subset = subset.query("domain == 'ball_in_cup-catch'")
 # subset = subset.query("domain == 'cartpole-swingup'")
 # subset = subset.query("domain == 'cheetah-run'")
@@ -591,7 +557,11 @@ subset.loc[subset.domain == 'walker-walk', 'domain'] = 'Walker, Walk'
 
 subset = subset.rename(columns={'reward': 'Reward', 'alg': 'Agent', 'domain': 'Task'})
 subset = subset.rename_axis(index={'steps':'Steps'})
-list(subset.columns)
+
+all_seeds_step_progress = {
+    task: subset.query("Task == @task and Agent == 'Markov+RAD'").groupby('seed').size().min()
+    for task in subset.Task.unique()
+}
 
 # subset = subset.query("steps <= 100e3")
 
@@ -602,23 +572,24 @@ p = sns.color_palette('Set1', n_colors=9, desat=0.5)
 red, blue, green, purple, orange, yellow, brown, pink, gray = p
 
 p = sns.color_palette('Set1', n_colors=len(subset['Agent'].unique()), desat=0.5)
+p[0] = blue
 p[0] = red
 p[1] = purple
 p[2] = orange
 p[3] = (.60,.57,.57) # reddish gray
 p[4] = green
-p[5] = blue
 g = sns.relplot(
     data=subset,
     x='Steps',
     y='Reward',
     hue='Agent',
-    hue_order=['Markov+RAD', 'RAD', 'CURL', 'SAC (expert)', 'DBC', exp_shortname],#, 'SAC (visual)' 'Markov+SAC (visual)',
+    hue_order=['Markov+RAD', 'RAD', 'CURL', 'SAC (expert)', 'DBC'],#, 'SAC (visual)' 'Markov+SAC (visual)',
     style='Agent',
     # style='markov_lr',
     col='Task',
     col_wrap=3,
-    style_order=['Markov+RAD', 'RAD', 'SAC (expert)', 'CURL', 'DBC', exp_shortname],#, 'SAC (visual)' 'Markov+SAC (visual)',
+    col_order=['Cartpole, Swingup', 'Ball-in-cup, Catch', 'Cheetah, Run', 'Finger, Spin', 'Reacher, Easy', 'Walker, Walk'],
+    style_order=['Markov+RAD', 'RAD', 'SAC (expert)', 'CURL', 'DBC'],#, 'SAC (visual)' 'Markov+SAC (visual)',
     kind='line',
     # units='seed',
     # estimator=None,
@@ -626,6 +597,17 @@ g = sns.relplot(
     palette=p,
     facet_kws={'sharex': False, 'sharey': True},
 )
+
+# draw progress line
+for ax in g.axes:
+    domain = ax.get_title().replace('Task = ','')
+    xmin, xmax = ax.get_xlim()
+    xpos = min(all_seeds_step_progress[domain] * 1000, xmax)
+    ymin, ymax = ax.get_ylim()
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
+    ax.vlines(xpos, ymin=ymin, ymax=ymax, linestyles='dashed', colors='black')
+
 leg = g._legend
 leg.set_draggable(True)
 # plt.title(d)
