@@ -48,12 +48,14 @@ python -m train --replicate --seed [seed] --domain_name [domain] --task_name [ta
 ```
 
 Explanation of important, non-obvious args:
+```
   `--replicate` - ensures that the RAD settings replicate the original RAD paper
   `--markov`    - enables the Markov abstraction objectives. It is intended to be used
                   in conjunction with the other Markov hyperparameters.
   `--work_dir`  - where to store learning performance results
   `--tag`       - a tag to use for each experiment (mainly used during hyperparameter
                   tuning)
+```
 
 The results for each trial will be saved into an `eval.log` file, which can be loaded
 into pandas as JSON data.
