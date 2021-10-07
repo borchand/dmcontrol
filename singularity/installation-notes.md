@@ -76,7 +76,7 @@ singularity shell --nv -B /gpfs/scratch,/gpfs/data ~/headless.sif
 
 ## Running on CCV with singularity
 
-0. Ensure singularity image ~/headless.sif exists.
+0. Ensure singularity image ~/headless.img exists.
 1. Update python packages in normal virtualenv.
 2. Update pipenv packages inside singularity.
     ```
