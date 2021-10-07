@@ -65,13 +65,13 @@ vagrant scp headless.def :~/
 vagrant ssh
 sudo singularity build headless.img headless.def
 exit
-vagrant scp :~/headless.sif .
-scp headless.sif cluster:~/
+vagrant scp :~/headless.img .
+scp headless.img cluster:~/
 ```
 
 On cluster:
 ```
-singularity shell --nv -B /gpfs/scratch,/gpfs/data ~/headless.sif
+singularity shell --nv -B /gpfs/scratch,/gpfs/data ~/headless.img
 ```
 
 ## Running on CCV with singularity
@@ -80,13 +80,13 @@ singularity shell --nv -B /gpfs/scratch,/gpfs/data ~/headless.sif
 1. Update python packages in normal virtualenv.
 2. Update pipenv packages inside singularity.
     ```
-    singularity exec -B /gpfs/scratch,/gpfs/data ~/headless.sif sh -c "PIPENV_IGNORE_VIRTUALENVS=1 pipenv install -r requirements.txt --skip-lock --ignore-pipfile"
+    singularity exec -B /gpfs/scratch,/gpfs/data ~/headless.img sh -c "PIPENV_IGNORE_VIRTUALENVS=1 pipenv install -r requirements.txt --skip-lock --ignore-pipfile"
     ```
 3. Configure onager:
     .onager/config:
     ```
     [slurm]
-    header = singularity exec --nv -B /gpfs/scratch,/gpfs/data ~/headless.sif sh -c ". venv/bin/activate && \
+    header = singularity exec --nv -B /gpfs/scratch,/gpfs/data ~/headless.img sh -c ". venv/bin/activate && \
     footer = "
     ```
 4. When calling prelaunch, prefix the command as follows:
