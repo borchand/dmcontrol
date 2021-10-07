@@ -60,10 +60,10 @@ export VM=sylabs/singularity-3.6-ubuntu-bionic64 && \
     vagrant up && \
     vagrant ssh
 exit
-vagrant pluging install vagrant-scp
+vagrant plugin install vagrant-scp
 vagrant scp headless.def :~/
 vagrant ssh
-sudo vagrant build headless.img headless.def
+sudo singularity build headless.img headless.def
 exit
 vagrant scp :~/headless.sif .
 scp headless.sif cluster:~/
