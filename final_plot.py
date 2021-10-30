@@ -23,35 +23,35 @@ def roll_and_tag(data, domain, seed, action_repeat):
     return data
 
 def load_sac(domain, seed, action_repeat, experiment_name):
-    filename = 'tmp/sac/' + experiment_name + '/eval.csv'
+    filename = 'results/sac/' + experiment_name + '/eval.csv'
     data = pd.read_csv(filename, dtype={'step': int, 'episode_reward': float, 'episode': int})
     data = data.rename(columns={'step': 'steps', 'episode_reward': 'reward'}).set_index('steps')
     data['alg'] = 'SAC (expert)'
     return roll_and_tag(data, domain, seed, action_repeat)
 
 def load_rad(domain, seed, action_repeat, experiment_name):
-    filename = 'tmp/rad/' + domain + experiment_name + '/eval.log'
+    filename = 'results/rad/' + domain + experiment_name + '/eval.log'
     data = pd.read_json(filename, lines=True)
     data = data.rename(columns={'step': 'steps', 'mean_episode_reward': 'reward'}).drop(columns=['episode_reward', 'eval_time', 'best_episode_reward']).set_index('steps')
     data['alg'] = 'RAD'
     return roll_and_tag(data, domain, seed, action_repeat)
 
 def load_curl(domain, seed, action_repeat, experiment_name):
-    filename = 'tmp/curl/' + domain.replace('pole','').split('-')[0] + '/' + domain + experiment_name + '/eval.log'
+    filename = 'results/curl/' + domain.replace('pole','').split('-')[0] + '/' + domain + experiment_name + '/eval.log'
     data = pd.read_json(filename, lines=True)
     data = data.rename(columns={'step': 'steps', 'mean_episode_reward': 'reward'}).drop(columns=['episode_reward', 'eval_time', 'best_episode_reward']).set_index('steps')
     data['alg'] = 'CURL'
     return roll_and_tag(data, domain, seed, action_repeat)
 
 def load_zhang(alg, alg_dirname, domain, seed):
-    filename = 'tmp/dbc/' + domain.replace('-','_') + '/' + alg_dirname + '/seed_{}'.format(seed) + '/eval.log'
+    filename = 'results/dbc/' + domain.replace('-','_') + '/' + alg_dirname + '/seed_{}'.format(seed) + '/eval.log'
     data = pd.read_json(filename, lines=True)
     data = data.rename(columns={'step': 'steps', 'episode_reward': 'reward'}).set_index('steps')
     data['alg'] = alg
     return roll_and_tag(data, domain, seed, 2)
 
 def load_ball_in_cup_dbc(seed):
-    filename = 'tmp/dbc-7/dbc-ball-original_{}/eval.log'.format(seed)
+    filename = 'results/dbc-7/dbc-ball-original_{}/eval.log'.format(seed)
     data = pd.read_json(filename, lines=True)
     data = data.rename(columns={'step': 'steps', 'episode_reward': 'reward'}).set_index('steps')
     data['alg'] = 'DBC'
@@ -299,7 +299,7 @@ markov_runs = [{
     'action_repeat': action_repeat,
     'domain': domain,
     'seed': seed,
-    'filename': list(sorted(glob.glob('tmp/{}/{}-*_{}/eval.log'.format(markov_experiments[exp], domain, seed))))[-1]
+    'filename': list(sorted(glob.glob('results/markov/{}-*_{}/eval.log'.format(domain, seed))))[-1]
 } for (domain, exp, seeds, action_repeat) in markov_domains for seed in seeds]
 
 
@@ -372,6 +372,16 @@ alg_order = [
 ]
 
 color_order = red, purple, orange, green, blue, yellow, brown, gray
+subset.reset_index(inplace=True)
+
+sns.set(context="notebook", style="white", font_scale=1.3)
+plt.rcParams['xtick.major.size'] = 5
+plt.rcParams['xtick.major.width'] = 2
+plt.rcParams['xtick.bottom'] = True
+plt.rcParams['ytick.major.size'] = 5
+plt.rcParams['ytick.major.width'] = 2
+plt.rcParams['ytick.left'] = True
+plt.rcParams['axes.linewidth'] = 2
 
 g = sns.relplot(
     data=subset,
@@ -391,11 +401,12 @@ g = sns.relplot(
     ci=90,
     # height=10,
     palette=color_order,
+    linewidth=2,
     legend=False,
     facet_kws={'sharex': False, 'sharey': True},
 )
 
-leg = g.axes.flat[3].legend(alg_order, ncol=2)
+leg = g.axes.flat[3].legend(alg_order, ncol=2, fontsize=12)
 N = len(leg.legendHandles) // 2
 leg.legendHandles[N:] = []
 leg.set_draggable(True)
