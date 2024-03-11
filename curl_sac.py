@@ -307,17 +307,17 @@ class RadSacAgent(object):
             obs_shape, action_shape, hidden_dim, encoder_type,
             encoder_feature_dim, actor_log_std_min, actor_log_std_max,
             num_layers, num_filters
-        ).to(device)
+        ).to(torch.float32).to(device)
 
         self.critic = Critic(
             obs_shape, action_shape, hidden_dim, encoder_type,
             encoder_feature_dim, num_layers, num_filters
-        ).to(device)
+        ).to(torch.float32).to(device)
 
         self.critic_target = Critic(
             obs_shape, action_shape, hidden_dim, encoder_type,
             encoder_feature_dim, num_layers, num_filters
-        ).to(device)
+        ).to(torch.float32).to(device)
 
         self.critic_target.load_state_dict(self.critic.state_dict())
 
@@ -328,9 +328,9 @@ class RadSacAgent(object):
         self.encoder = self.critic.encoder
         self.markov_head = MarkovHead(
             markov_params, action_shape, LOG_FREQ
-        ).to(device)
+        ).to(torch.float32).to(device)
 
-        self.log_alpha = torch.tensor(np.log(init_temperature)).to(device)
+        self.log_alpha = torch.tensor(np.log(init_temperature)).to(torch.float32).to(device)
         self.log_alpha.requires_grad = True
         # set target entropy to -|A|
         self.target_entropy = -np.prod(action_shape)
@@ -358,7 +358,7 @@ class RadSacAgent(object):
             # create CURL encoder (the 128 batch size is probably unnecessary)
             self.CURL = CURL(obs_shape, encoder_feature_dim,
                         #NOTE: self.latent_dim is being used as a batch size??
-                        self.latent_dim, self.critic, self.critic_target, output_type='continuous').to(self.device)
+                        self.latent_dim, self.critic, self.critic_target, output_type='continuous').to(torch.float32).to(self.device)
 
             # optimizer for critic encoder for reconstruction loss
             self.encoder_optimizer = torch.optim.Adam(
@@ -395,7 +395,7 @@ class RadSacAgent(object):
 
     def select_action(self, obs):
         with torch.no_grad():
-            obs = torch.FloatTensor(obs).to(self.device)
+            obs = torch.FloatTensor(obs).to(torch.float32).to(self.device)
             obs = obs.unsqueeze(0)
             mu, _, _, _ = self.actor(
                 obs, compute_pi=False, compute_log_pi=False
@@ -407,7 +407,7 @@ class RadSacAgent(object):
             obs = utils.center_crop_image(obs, self.image_size)
 
         with torch.no_grad():
-            obs = torch.FloatTensor(obs).to(self.device)
+            obs = torch.FloatTensor(obs).to(torch.float32).to(torch.float32).to(self.device)
             obs = obs.unsqueeze(0)
             mu, pi, _, _ = self.actor(obs, compute_log_pi=False)
             return pi.cpu().data.numpy().flatten()
@@ -503,7 +503,7 @@ class RadSacAgent(object):
         z_pos = self.CURL.encode(obs_pos, ema=True)
 
         logits = self.CURL.compute_logits(z_a, z_pos)
-        labels = torch.arange(logits.shape[0]).long().to(self.device)
+        labels = torch.arange(logits.shape[0]).long().to(torch.float32).to(self.device)
         loss = self.cross_entropy_loss(logits, labels)
 
         self.encoder_optimizer.zero_grad()
